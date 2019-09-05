@@ -1,0 +1,7 @@
+addi $t2 , $t2 , 16
+
+add $t1 , $zero , $t1
+
+subi $t2 , $t2 , 0
+
+sub $t1 , $zero , $t1
