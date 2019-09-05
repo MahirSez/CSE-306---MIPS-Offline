@@ -18,7 +18,7 @@ letter [A-Za-z]
 delim [ \t\r\f\v\n]
 ws [delim]+
 id (_|{letter})(_|{letter}|{digit})*
-integer {digit}+
+integer [+-]?{digit}+
 
 %%
 

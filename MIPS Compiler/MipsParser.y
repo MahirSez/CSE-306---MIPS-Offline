@@ -23,13 +23,82 @@ map<string , int >jmpAt ;
 map<string,string> machineCode , registerID;
 bool secondPass;
 
+int getDecimal(char ch) {
+
+    if(ch>='A' && ch<='F') return (ch - 'A' + 10);
+    return (ch -'0');
+}
 
 
+char hexSubtract(char c1 , char c2) {
 
-string toHex(int num , int tgt) {
+    
+    int num1 = getDecimal(c1);
+    int num2 = getDecimal(c2);
+
+    int ret = num1 - num2;
+
+    char ch;
+    if(ret < 10 ) ch = char(ret + '0');
+    else {
+        ret %=10;
+        ch = char(ret + 'A');
+    }
+    return ch;
+}
+
+string addOne(string str) {
+
+    string one = "1";
+    while(one.size() < str.size()) one = "0" + one;
+
+    int carry = 0;
+
+    string tot = "";
+
+    for(int i = str.size() -1 ; i >= 0 ; i-- ) {
+
+        int num1 = getDecimal(str[i]);
+        int num2 = getDecimal(one[i]);
+        int sum = num1 + num2 + carry;
+
+        carry = sum/16;
+        sum %= 16;
+
+        if(sum < 10 ) tot  += char(sum + '0');
+        else {
+            sum%=10;
+            tot += char('A' + sum);
+        }
+    }
+    reverse(tot.begin() , tot.end());
+    return tot;
+
+}
+
+
+string complimented(string str) {
 
     
 
+    for(int i =0 ; i < str.size() ; i++ ) {
+
+        str[i] = hexSubtract('F' , str[i]);
+    }
+
+    return addOne(str);
+
+
+}
+
+string toHex(int num , int tgt) {
+
+
+    bool neg = false;
+    if(num < 0 ) {
+        neg = true;
+    }
+    num = abs(num);
     string str = "";
 
     while(num) {
@@ -46,7 +115,8 @@ string toHex(int num , int tgt) {
 
     while(str.size() < tgt) str += '0';
     reverse(str.begin() , str.end());
-    
+
+    if(neg) return complimented(str);
     return str;
 }
 string toHex(string ss,int tgt) {
@@ -54,11 +124,13 @@ string toHex(string ss,int tgt) {
     int num = 0;
 
     for(int i =0 ; i < ss.size() ; i++ ) {
-
+        
+        if(ss[i] == '-') continue;
         num *= 10;
 
         num += (ss[i] - '0');
     }
+    if(ss[0] == '-') num *=-1;
     
     return toHex(num , tgt);
     
@@ -102,14 +174,14 @@ void initialize() {
     //     cout<<i<<" "<<machineCode[ops[i]]<<" "<<(pattern[i]-'A')<<endl;
     // }
 
+    registerID["$zero"] = "0";
+    registerID["$t0"] = "1";
+    registerID["$t1"] = "2";
+    registerID["$t2"] = "3";
+    registerID["$t3"] = "4";
+    registerID["$t4"] = "5";
+    registerID["$sp"] = "6";
     
-    registerID["$t0"] = "0";
-    registerID["$t1"] = "1";
-    registerID["$t2"] = "2";
-    registerID["$t3"] = "3";
-    registerID["$t4"] = "4";
-    registerID["$sp"] = "5";
-    registerID["$zero"] = "6";
 
 
 }

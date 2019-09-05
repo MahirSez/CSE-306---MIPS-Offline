@@ -88,13 +88,82 @@ map<string , int >jmpAt ;
 map<string,string> machineCode , registerID;
 bool secondPass;
 
+int getDecimal(char ch) {
+
+    if(ch>='A' && ch<='F') return (ch - 'A' + 10);
+    return (ch -'0');
+}
 
 
+char hexSubtract(char c1 , char c2) {
 
-string toHex(int num , int tgt) {
+    
+    int num1 = getDecimal(c1);
+    int num2 = getDecimal(c2);
+
+    int ret = num1 - num2;
+
+    char ch;
+    if(ret < 10 ) ch = char(ret + '0');
+    else {
+        ret %=10;
+        ch = char(ret + 'A');
+    }
+    return ch;
+}
+
+string addOne(string str) {
+
+    string one = "1";
+    while(one.size() < str.size()) one = "0" + one;
+
+    int carry = 0;
+
+    string tot = "";
+
+    for(int i = str.size() -1 ; i >= 0 ; i-- ) {
+
+        int num1 = getDecimal(str[i]);
+        int num2 = getDecimal(one[i]);
+        int sum = num1 + num2 + carry;
+
+        carry = sum/16;
+        sum %= 16;
+
+        if(sum < 10 ) tot  += char(sum + '0');
+        else {
+            sum%=10;
+            tot += char('A' + sum);
+        }
+    }
+    reverse(tot.begin() , tot.end());
+    return tot;
+
+}
+
+
+string complimented(string str) {
 
     
 
+    for(int i =0 ; i < str.size() ; i++ ) {
+
+        str[i] = hexSubtract('F' , str[i]);
+    }
+
+    return addOne(str);
+
+
+}
+
+string toHex(int num , int tgt) {
+
+
+    bool neg = false;
+    if(num < 0 ) {
+        neg = true;
+    }
+    num = abs(num);
     string str = "";
 
     while(num) {
@@ -111,7 +180,8 @@ string toHex(int num , int tgt) {
 
     while(str.size() < tgt) str += '0';
     reverse(str.begin() , str.end());
-    
+
+    if(neg) return complimented(str);
     return str;
 }
 string toHex(string ss,int tgt) {
@@ -119,11 +189,13 @@ string toHex(string ss,int tgt) {
     int num = 0;
 
     for(int i =0 ; i < ss.size() ; i++ ) {
-
+        
+        if(ss[i] == '-') continue;
         num *= 10;
 
         num += (ss[i] - '0');
     }
+    if(ss[0] == '-') num *=-1;
     
     return toHex(num , tgt);
     
@@ -167,21 +239,21 @@ void initialize() {
     //     cout<<i<<" "<<machineCode[ops[i]]<<" "<<(pattern[i]-'A')<<endl;
     // }
 
+    registerID["$zero"] = "0";
+    registerID["$t0"] = "1";
+    registerID["$t1"] = "2";
+    registerID["$t2"] = "3";
+    registerID["$t3"] = "4";
+    registerID["$t4"] = "5";
+    registerID["$sp"] = "6";
     
-    registerID["$t0"] = "0";
-    registerID["$t1"] = "1";
-    registerID["$t2"] = "2";
-    registerID["$t3"] = "3";
-    registerID["$t4"] = "4";
-    registerID["$sp"] = "5";
-    registerID["$zero"] = "6";
 
 
 }
 
 
 
-#line 185 "y.tab.c" /* yacc.c:339  */
+#line 257 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -282,7 +354,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 286 "y.tab.c" /* yacc.c:358  */
+#line 358 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -582,9 +654,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   128,   128,   140,   145,   151,   156,   163,   174,   184,
-     194,   205,   217,   227,   237,   247,   259,   269,   280,   290,
-     301,   312,   325
+       0,   200,   200,   212,   217,   223,   228,   235,   246,   256,
+     266,   277,   289,   299,   309,   319,   331,   341,   352,   362,
+     373,   384,   397
 };
 #endif
 
@@ -1408,7 +1480,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 128 "MipsParser.y" /* yacc.c:1646  */
+#line 200 "MipsParser.y" /* yacc.c:1646  */
     {
 
 			(yyval) = (yyvsp[0]);
@@ -1420,50 +1492,50 @@ yyreduce:
             }
 			
 		}
-#line 1424 "y.tab.c" /* yacc.c:1646  */
+#line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 140 "MipsParser.y" /* yacc.c:1646  */
+#line 212 "MipsParser.y" /* yacc.c:1646  */
     {
 
 				(yyval) = new SymbolInfo() ;
 				(yyval)->code = (yyvsp[-1])->code + (yyvsp[0])->code;
 			}
-#line 1434 "y.tab.c" /* yacc.c:1646  */
+#line 1506 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 145 "MipsParser.y" /* yacc.c:1646  */
+#line 217 "MipsParser.y" /* yacc.c:1646  */
     { 
 				(yyval) = (yyvsp[0]) ;
 			}
-#line 1442 "y.tab.c" /* yacc.c:1646  */
+#line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 151 "MipsParser.y" /* yacc.c:1646  */
+#line 223 "MipsParser.y" /* yacc.c:1646  */
     { 
 			(yyval) = new SymbolInfo() ;
             jmpAt[(yyvsp[-1])->getName()] = instruction_count;
 
 		}
-#line 1452 "y.tab.c" /* yacc.c:1646  */
+#line 1524 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 156 "MipsParser.y" /* yacc.c:1646  */
+#line 228 "MipsParser.y" /* yacc.c:1646  */
     {
 
 			(yyval) = (yyvsp[0]) ;
             instruction_count++;
 			
 		}
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1535 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 163 "MipsParser.y" /* yacc.c:1646  */
+#line 235 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1475,11 +1547,11 @@ yyreduce:
                 (yyval)->code = op + s1 + s2 + dst + "0\n";
 
 			}
-#line 1479 "y.tab.c" /* yacc.c:1646  */
+#line 1551 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 174 "MipsParser.y" /* yacc.c:1646  */
+#line 246 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1490,11 +1562,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + dst +  imm  + "\n";
             }
-#line 1494 "y.tab.c" /* yacc.c:1646  */
+#line 1566 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 184 "MipsParser.y" /* yacc.c:1646  */
+#line 256 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1505,11 +1577,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + s2 + dst + "0\n";
             }
-#line 1509 "y.tab.c" /* yacc.c:1646  */
+#line 1581 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 194 "MipsParser.y" /* yacc.c:1646  */
+#line 266 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1521,11 +1593,11 @@ yyreduce:
                 (yyval)->code = op + s1 + dst +  imm  + "\n";
                 
             }
-#line 1525 "y.tab.c" /* yacc.c:1646  */
+#line 1597 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 205 "MipsParser.y" /* yacc.c:1646  */
+#line 277 "MipsParser.y" /* yacc.c:1646  */
     {
 
 
@@ -1538,11 +1610,11 @@ yyreduce:
                 (yyval)->code = op + s1 + s2 + dst + "0\n";
 
             }
-#line 1542 "y.tab.c" /* yacc.c:1646  */
+#line 1614 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 217 "MipsParser.y" /* yacc.c:1646  */
+#line 289 "MipsParser.y" /* yacc.c:1646  */
     {
                 
                 (yyval) = new SymbolInfo();
@@ -1553,11 +1625,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + dst +  imm  + "\n";                
             }
-#line 1557 "y.tab.c" /* yacc.c:1646  */
+#line 1629 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 227 "MipsParser.y" /* yacc.c:1646  */
+#line 299 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1568,11 +1640,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + s2 + dst + "0\n";
             }
-#line 1572 "y.tab.c" /* yacc.c:1646  */
+#line 1644 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 237 "MipsParser.y" /* yacc.c:1646  */
+#line 309 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1583,11 +1655,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + dst +  imm  + "\n";     
             }
-#line 1587 "y.tab.c" /* yacc.c:1646  */
+#line 1659 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 247 "MipsParser.y" /* yacc.c:1646  */
+#line 319 "MipsParser.y" /* yacc.c:1646  */
     {
                 
                 (yyval) = new SymbolInfo();
@@ -1599,11 +1671,11 @@ yyreduce:
                 
                 (yyval)->code = op + "0" + s1 + dst +  shamt  + "\n";     
             }
-#line 1603 "y.tab.c" /* yacc.c:1646  */
+#line 1675 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 259 "MipsParser.y" /* yacc.c:1646  */
+#line 331 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1614,11 +1686,11 @@ yyreduce:
 
                 (yyval)->code = op + "0" + s1 + dst +  shamt  + "\n";                
             }
-#line 1618 "y.tab.c" /* yacc.c:1646  */
+#line 1690 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 269 "MipsParser.y" /* yacc.c:1646  */
+#line 341 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1629,11 +1701,11 @@ yyreduce:
 
                 (yyval)->code = op + s1 + s2 + dst + "0\n";
             }
-#line 1633 "y.tab.c" /* yacc.c:1646  */
+#line 1705 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 280 "MipsParser.y" /* yacc.c:1646  */
+#line 352 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1644,11 +1716,11 @@ yyreduce:
 
                 (yyval)->code = op + reg2 + reg1 +  imm  + "\n";
             }
-#line 1648 "y.tab.c" /* yacc.c:1646  */
+#line 1720 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 290 "MipsParser.y" /* yacc.c:1646  */
+#line 362 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1660,11 +1732,11 @@ yyreduce:
                 (yyval)->code = op + reg2 + reg1 +  imm  + "\n";                
 
             }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1736 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 301 "MipsParser.y" /* yacc.c:1646  */
+#line 373 "MipsParser.y" /* yacc.c:1646  */
     {
 
                 (yyval) = new SymbolInfo();
@@ -1676,11 +1748,11 @@ yyreduce:
                 (yyval)->code = op + reg2 + reg1 +  label  + "\n";                
 
             }
-#line 1680 "y.tab.c" /* yacc.c:1646  */
+#line 1752 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 312 "MipsParser.y" /* yacc.c:1646  */
+#line 384 "MipsParser.y" /* yacc.c:1646  */
     {
                 
                 (yyval) = new SymbolInfo();
@@ -1694,29 +1766,29 @@ yyreduce:
                 (yyval)->code = op + reg2 + reg1 +  label  + "\n";   
                 //cout<<$$->code<<endl;
             }
-#line 1698 "y.tab.c" /* yacc.c:1646  */
+#line 1770 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 325 "MipsParser.y" /* yacc.c:1646  */
+#line 397 "MipsParser.y" /* yacc.c:1646  */
     {
                 
                 (yyval) = new SymbolInfo();
                 string op = machineCode["j"];
                 string label = toHex(jmpAt[(yyvsp[0])->getName()] , 2);
 
-                cout<<(yyvsp[0])->getName()<<" "<<jmpAt[(yyvsp[0])->getName()] <<" "<<label<<endl;
+                //cout<<$2->getName()<<" "<<jmpAt[$2->getName()] <<" "<<label<<endl;
                 
 
                 (yyval)->code = op + label + "00\n";
-                cout<<(yyval)->code<<endl;
+                //cout<<$$->code<<endl;
 
             }
-#line 1716 "y.tab.c" /* yacc.c:1646  */
+#line 1788 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1720 "y.tab.c" /* yacc.c:1646  */
+#line 1792 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1944,7 +2016,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 341 "MipsParser.y" /* yacc.c:1906  */
+#line 413 "MipsParser.y" /* yacc.c:1906  */
 
 int main(int argc,char *argv[])
 {
