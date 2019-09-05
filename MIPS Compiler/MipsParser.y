@@ -94,21 +94,22 @@ void initialize() {
 
     for(int i =0 ; i < ops.size() ; i++ ) {
         
-        int num =  (pattern[i] - 'A') ;
-        machineCode[ops[i]] = toHex(num , 1);
+        int id =  (pattern[i] - 'A') ;
+        machineCode[ops[id]] = toHex(i , 1);
     }
 
     // for(int i= 0 ; i < ops.size() ; i++ ) {
     //     cout<<i<<" "<<machineCode[ops[i]]<<" "<<(pattern[i]-'A')<<endl;
     // }
 
-    registerID["$zero"] = "0";
-    registerID["$t0"] = "1";
-    registerID["$t1"] = "2";
-    registerID["$t2"] = "3";
-    registerID["$t3"] = "4";
-    registerID["$t4"] = "5";
-    registerID["$sp"] = "6";
+    
+    registerID["$t0"] = "0";
+    registerID["$t1"] = "1";
+    registerID["$t2"] = "2";
+    registerID["$t3"] = "3";
+    registerID["$t4"] = "4";
+    registerID["$sp"] = "5";
+    registerID["$zero"] = "6";
 
 
 }
@@ -127,7 +128,12 @@ void initialize() {
 start:	program	{
 
 			$$ = $1;
-            fprintf(outputFile , "%s\n" , $$->code.c_str() );
+            $$->code = "v2.0 raw\n" + $1->code;
+            if(secondPass) {
+                outputFile = fopen("MachineCode.txt" , "w");
+                fprintf(outputFile , "%s\n" , $$->code.c_str() );
+                fclose(outputFile);
+            }
 			
 		}
 
@@ -143,10 +149,12 @@ program:	program unit {
 
 	
 unit:	LABEL COLON	{ 
-			$$ = $1 ;
-            jmpAt[$$->getName()] = instruction_count;
+			$$ = new SymbolInfo() ;
+            jmpAt[$1->getName()] = instruction_count;
+
 		}
  		|	expression	{
+
 			$$ = $1 ;
             instruction_count++;
 			
@@ -244,6 +252,7 @@ expression: ADD  REGISTER COMMA REGISTER COMMA REGISTER 	{
                 string s1 = registerID[$4->getName()];
                 string shamt = toHex($6->getName() , 1);   
 
+                
                 $$->code = op + "0" + s1 + dst +  shamt  + "\n";     
             }
 
@@ -294,10 +303,10 @@ expression: ADD  REGISTER COMMA REGISTER COMMA REGISTER 	{
                 $$ = new SymbolInfo();
                 string op = machineCode["beq"];
                 string reg1 = registerID[$2->getName()];
-                string reg2 = registerID[$6->getName()];
-                string imm = toHex($4->getName() , 2); 
+                string reg2 = registerID[$4->getName()];
+                string label = toHex(jmpAt[$6->getName()] , 2);
 
-                $$->code = op + reg2 + reg1 +  imm  + "\n";                
+                $$->code = op + reg2 + reg1 +  label  + "\n";                
 
             }
             |   BNEQ REGISTER COMMA REGISTER COMMA LABEL {
@@ -305,18 +314,25 @@ expression: ADD  REGISTER COMMA REGISTER COMMA REGISTER 	{
                 $$ = new SymbolInfo();
                 string op = machineCode["bneq"];
                 string reg1 = registerID[$2->getName()];
-                string reg2 = registerID[$6->getName()];
-                string imm = toHex($4->getName() , 2); 
+                string reg2 = registerID[$4->getName()];
+                string label = toHex(jmpAt[$6->getName()] , 2);
 
-                $$->code = op + reg2 + reg1 +  imm  + "\n";    
+                //cout<<$6->getName()<<" "<<jmpAt[$6->getName()]<<" "<<label<<endl;
+
+                $$->code = op + reg2 + reg1 +  label  + "\n";   
+                //cout<<$$->code<<endl;
             }
             |   J LABEL {
                 
                 $$ = new SymbolInfo();
                 string op = machineCode["j"];
-                string address = toHex(jmpAt[$2->getName()] , 2);
+                string label = toHex(jmpAt[$2->getName()] , 2);
 
-                $$->code = op + address + "00\n";
+                //cout<<$2->getName()<<" "<<jmpAt[$2->getName()] <<" "<<label<<endl;
+                
+
+                $$->code = op + label + "00\n";
+                //cout<<$$->code<<endl;
 
             };
 	
@@ -329,25 +345,21 @@ int main(int argc,char *argv[])
     initialize();
 
     secondPass = false;
-    instruction_count = 0;
-	
+    instruction_count = 0;	
     fp = fopen(argv[1],"r");
-	outputFile = fopen("MachineCode.txt" , "w");
 
 	yyin=fp;
 	yyparse();
+    fclose(fp);
+
 
     instruction_count = 0;
     secondPass = true;
-
     fp = fopen(argv[1],"r");
-	outputFile = fopen("MachineCode.txt" , "w");
-
+	
 	yyin=fp;
 	yyparse();
-    
-
-	fclose(fp);
+    fclose(fp);
 	
 	return 0;
 }
