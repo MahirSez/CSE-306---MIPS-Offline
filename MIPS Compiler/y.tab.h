@@ -61,13 +61,14 @@ extern int yydebug;
     BEQ = 271,
     BNEQ = 272,
     J = 273,
-    REGISTER = 274,
-    COMMA = 275,
-    CONST_INT = 276,
-    COLON = 277,
-    LABEL = 278,
-    LPAREN = 279,
-    RPAREN = 280
+    MOV = 274,
+    REGISTER = 275,
+    COMMA = 276,
+    CONST_INT = 277,
+    COLON = 278,
+    LABEL = 279,
+    LPAREN = 280,
+    RPAREN = 281
   };
 #endif
 /* Tokens.  */
@@ -87,13 +88,14 @@ extern int yydebug;
 #define BEQ 271
 #define BNEQ 272
 #define J 273
-#define REGISTER 274
-#define COMMA 275
-#define CONST_INT 276
-#define COLON 277
-#define LABEL 278
-#define LPAREN 279
-#define RPAREN 280
+#define MOV 274
+#define REGISTER 275
+#define COMMA 276
+#define CONST_INT 277
+#define COLON 278
+#define LABEL 279
+#define LPAREN 280
+#define RPAREN 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

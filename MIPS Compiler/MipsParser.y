@@ -191,7 +191,7 @@ void initialize() {
 
 %define api.value.type { SymbolInfo* }
 
-%token ADD  ADDI  SUB  SUBI  AND  ANDI  OR  ORI  SLL  SRL  NOR  SW  LW  BEQ  BNEQ  J
+%token ADD  ADDI  SUB  SUBI  AND  ANDI  OR  ORI  SLL  SRL  NOR  SW  LW  BEQ  BNEQ  J MOV
 %token REGISTER   COMMA  CONST_INT   COLON  LABEL   LPAREN RPAREN
 
 %%
@@ -406,7 +406,18 @@ expression: ADD  REGISTER COMMA REGISTER COMMA REGISTER 	{
                 $$->code = op + label + "00\n";
                 //cout<<$$->code<<endl;
 
-            };
+            }
+			|MOV  REGISTER COMMA REGISTER {
+
+                $$ = new SymbolInfo();
+                string op = machineCode["add"];
+                string dst = registerID[$2->getName()];
+                string s1 = registerID[$4->getName()];
+                string s2 = registerID["$zero"];
+
+                $$->code = op + s1 + s2 + dst + "0\n";
+
+			};
 	
 
 

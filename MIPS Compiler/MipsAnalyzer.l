@@ -40,7 +40,7 @@ integer [+-]?{digit}+
 "beq"       {return BEQ; }
 "bneq"      {return BNEQ; }
 "j"         {return J; }
-
+"mov"       {return MOV;}
 
 
 "$t"[0-4]  |
