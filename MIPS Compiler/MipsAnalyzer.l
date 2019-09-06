@@ -41,7 +41,8 @@ integer [+-]?{digit}+
 "bneq"      {return BNEQ; }
 "j"         {return J; }
 "mov"       {return MOV;}
-
+"jr"        {return JR;}
+"movi"       {return MOVI;}
 
 "$t"[0-4]  |
 "$zero"    |

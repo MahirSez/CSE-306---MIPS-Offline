@@ -4,3 +4,4 @@ ori $t2,$t2,50
 ori $t1,$t1,50
 ori $t0,$t0,50
 mov $t4,$t3
+movi $t4,-7
